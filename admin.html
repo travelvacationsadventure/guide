@@ -3,168 +3,553 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Control Panel | TerraNova Global</title>
-  <meta name="robots" content="noindex, nofollow">
+  <title>Control Panel - WanderLanka</title>
   <link rel="stylesheet" href="css/style.css">
-  
-  <!-- TinyMCE Rich-Text Engine -->
-  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-  <script>
-    tinymce.init({
-      selector: '#article-tinymce',
-      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-      skin: 'oxide-dark',
-      content_css: 'dark',
-      height: 400
-    });
-  </script>
+  <style>
+    .login-container {
+      max-width: 420px;
+      margin: 6rem auto;
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
 </head>
 <body>
 
-  <header class="navbar">
-    <a href="index.html" class="brand-logo">TERRA<span>NOVA</span> CMS</a>
-    <div>
-      <span id="user-pill" style="font-size: 0.85rem; color: var(--text-muted); margin-right: 1.2rem;"></span>
-      <button id="admin-logout-btn" class="btn btn-danger" style="display:none; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Log Out</button>
+  <!-- Admin Top Bar -->
+  <header class="header" style="background:#0f172a; border-bottom:1px solid rgba(255,255,255,0.1);">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo" style="color:#fff;">
+        ⚡ Wander<span>Admin</span>
+      </a>
+      <div id="auth-actions" style="display:flex; align-items:center; gap:1rem;">
+        <span id="user-display" style="color:#94a3b8; font-size:0.85rem;">Not Logged In</span>
+        <button id="logout-btn" class="btn-danger" style="display:none;">Sign Out</button>
+      </div>
     </div>
   </header>
 
-  <main class="container">
-    
-    <!-- Sign In Panel -->
-    <div id="login-panel" style="max-width: 440px; margin: 4rem auto; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: 2.5rem;">
-      <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">Editor Gateway</h2>
-      <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; margin-bottom: 2rem;">Sign in to access publishing tools.</p>
+  <!-- Login Shield (Shown if not logged in) -->
+  <div id="login-shield" class="container">
+    <div class="login-container">
+      <h2 style="font-size:1.6rem; font-weight:800; margin-bottom:0.5rem; color:var(--dark);">Admin Access</h2>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1.5rem;">Sign in with your Firebase Authentication administrator account.</p>
       
+      <div id="login-error" style="display:none; color:var(--danger); font-size:0.85rem; margin-bottom:1rem; padding:0.5rem; background:#fee2e2; border-radius:4px;"></div>
+
       <form id="admin-login-form">
         <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" id="login-email" class="form-control" required placeholder="admin@terranova.com">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="login-email" class="form-control" required placeholder="admin@guide.com">
         </div>
         <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="login-pass" class="form-control" required placeholder="••••••••">
+          <label class="form-label">Password</label>
+          <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Authenticate Session</button>
+        <button type="submit" class="btn-primary" style="width:100%; justify-content:center;">Authenticate</button>
       </form>
     </div>
+  </div>
 
-    <!-- Active Management Dashboard -->
-    <div id="dashboard-panel" style="display: none;">
+  <!-- Main Authenticated Admin Workspace -->
+  <div id="admin-workspace" class="admin-layout" style="display:none;">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-nav-item active" data-tab="tab-dashboard">📊 Dashboard Overview</div>
+      <div class="admin-nav-item" data-tab="tab-posts">📝 Manage Articles</div>
+      <div class="admin-nav-item" data-tab="tab-destinations">📍 Manage Destinations</div>
+      <div class="admin-nav-item" data-tab="tab-inquiries">📬 Inquiries Inbox</div>
+      <div class="admin-nav-item" data-tab="tab-settings">⚙️ Site Settings</div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-content">
       
-      <!-- Metrics Overview -->
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-number" id="count-articles">0</div>
-          <div class="stat-label">Published Articles</div>
+      <!-- 1. DASHBOARD OVERVIEW -->
+      <section id="tab-dashboard" class="tab-content active">
+        <h2 style="margin-bottom:1.5rem;">Operational Dashboard</h2>
+        <div class="admin-stats">
+          <div class="stat-card">
+            <h4>Total Published Articles</h4>
+            <div class="stat-number" id="stat-posts">0</div>
+          </div>
+          <div class="stat-card">
+            <h4>Active Destinations</h4>
+            <div class="stat-number" id="stat-destinations">0</div>
+          </div>
+          <div class="stat-card">
+            <h4>Inquiries Received</h4>
+            <div class="stat-number" id="stat-inquiries">0</div>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-number" id="count-enquiries">0</div>
-          <div class="stat-label">Pending Inquiries</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-number">2026</div>
-          <div class="stat-label">Cloud Edition</div>
-        </div>
-      </div>
 
-      <!-- Navigation Tabs -->
-      <div class="admin-tabs">
-        <button class="tab-btn active" id="tab-btn-write">Create Article (TinyMCE)</button>
-        <button class="tab-btn" id="tab-btn-articles">Manage Articles</button>
-        <button class="tab-btn" id="tab-btn-enquiries">Trip Inquiries & Messages</button>
-      </div>
-
-      <!-- TAB 1: Editor / Compose -->
-      <section id="tab-write-section" class="contact-card">
-        <h2 style="margin-bottom: 1.5rem;">Compose Travel Article</h2>
-        <form id="new-article-form">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <div class="form-group">
-              <label>Article Title</label>
-              <input type="text" id="art-input-title" class="form-control" required placeholder="e.g. Crossing the Pamir Highway">
-            </div>
-            <div class="form-group">
-              <label>Category (Alpine, Coastal, Culture, Safari)</label>
-              <input type="text" id="art-input-category" class="form-control" required placeholder="Alpine">
-            </div>
+        <div style="background:#fff; padding:1.5rem; border-radius:var(--radius-md); box-shadow:var(--shadow-sm);">
+          <h3 style="margin-bottom:0.75rem;">Platform Quick Actions</h3>
+          <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+            <button class="btn-primary" onclick="openPostModal()">+ Create New Article</button>
+            <button class="btn-secondary" onclick="openDestModal()">+ Add New Destination</button>
+            <a href="index.html" target="_blank" class="btn-outline">Open Live Website &rarr;</a>
           </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <div class="form-group">
-              <label>Author</label>
-              <input type="text" id="art-input-author" class="form-control" required placeholder="Your Name or Editorial Desk">
-            </div>
-            <div class="form-group">
-              <label>High-Res Cover Image Link</label>
-              <input type="url" id="art-input-image" class="form-control" required placeholder="https://images.unsplash.com/...">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>SEO Meta Excerpt</label>
-            <textarea id="art-input-excerpt" class="form-control" rows="2" required placeholder="1-2 sentence hook for cards and search engine snippets..."></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Complete Article Body</label>
-            <textarea id="article-tinymce"></textarea>
-          </div>
-
-          <button type="submit" id="btn-publish-art" class="btn btn-primary" style="padding: 1rem 2.5rem;">Publish to Worldwide Feed</button>
-        </form>
-      </section>
-
-      <!-- TAB 2: Manage Articles List -->
-      <section id="tab-articles-section" class="contact-card" style="display: none;">
-        <h2 style="margin-bottom: 1.5rem;">Existing Articles</h2>
-        <div style="overflow-x: auto;">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Author</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="articles-table-body">
-              <tr><td colspan="4" style="color:var(--text-muted);">Syncing database...</td></tr>
-            </tbody>
-          </table>
         </div>
       </section>
 
-      <!-- TAB 3: Enquiries -->
-      <section id="tab-enquiries-section" class="contact-card" style="display: none;">
-        <h2 style="margin-bottom: 1.5rem;">Travel Inquiries Received</h2>
-        <div style="overflow-x: auto;">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Client</th>
-                <th>Email</th>
-                <th>Destination</th>
-                <th>Message</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="enquiries-table-body">
-              <tr><td colspan="6" style="color:var(--text-muted);">Loading user submissions...</td></tr>
-            </tbody>
-          </table>
+      <!-- 2. ARTICLES MANAGER -->
+      <section id="tab-posts" class="tab-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h2>Travel Articles & Guides</h2>
+          <button class="btn-primary" onclick="openPostModal()">+ New Article</button>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Read Time</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="posts-table-body">
+            <tr><td colspan="4">Loading guides...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 3. DESTINATIONS MANAGER -->
+      <section id="tab-destinations" class="tab-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <h2>Destinations Catalog</h2>
+          <button class="btn-secondary" onclick="openDestModal()">+ Add Destination</button>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Destination</th>
+              <th>Region</th>
+              <th>Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="destinations-table-body">
+            <tr><td colspan="4">Loading destinations...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 4. INQUIRIES INBOX -->
+      <section id="tab-inquiries" class="tab-content">
+        <h2 style="margin-bottom:1.5rem;">Visitor Inquiries</h2>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Sender</th>
+              <th>Subject</th>
+              <th>Message</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inquiries-table-body">
+            <tr><td colspan="4">Loading messages...</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 5. SITE SETTINGS -->
+      <section id="tab-settings" class="tab-content">
+        <h2 style="margin-bottom:1.5rem;">Homepage Dynamic Settings</h2>
+        <div style="background:#fff; padding:2rem; border-radius:var(--radius-md); max-width:650px;">
+          <form id="settings-form">
+            <div class="form-group">
+              <label class="form-label">Hero Title</label>
+              <input type="text" id="set-hero-title" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Hero Subtitle</label>
+              <textarea id="set-hero-subtitle" rows="3" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Top Announcement Bar Text</label>
+              <input type="text" id="set-announcement" class="form-control" required>
+            </div>
+            <button type="submit" class="btn-primary">Save Settings to Cloud</button>
+          </form>
         </div>
       </section>
 
+    </main>
+  </div>
+
+  <!-- MODAL: ADD / EDIT POST -->
+  <div class="modal-overlay" id="post-modal">
+    <div class="modal-box">
+      <h3 style="margin-bottom:1.25rem;" id="post-modal-title">Write New Travel Guide</h3>
+      <form id="post-form">
+        <input type="hidden" id="post-edit-id">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input type="text" id="post-title" class="form-control" required placeholder="e.g. 3-Day Ella Itinerary">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="post-category" class="form-control">
+            <option value="Hill Country">Hill Country</option>
+            <option value="Culture">Culture</option>
+            <option value="Coast">Coast</option>
+            <option value="Wildlife">Wildlife</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cover Image URL</label>
+          <input type="url" id="post-image" class="form-control" required placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estimated Read Time</label>
+          <input type="text" id="post-readtime" class="form-control" placeholder="e.g. 6 min read" value="5 min read">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Short Summary (Excerpt)</label>
+          <input type="text" id="post-excerpt" class="form-control" placeholder="Brief 1-2 sentence teaser">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Full Guide Content</label>
+          <textarea id="post-content" rows="8" class="form-control" required placeholder="Write body content here..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn-outline" onclick="closePostModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Save Article</button>
+        </div>
+      </form>
     </div>
-  </main>
+  </div>
 
-  <footer>
-    <p>&copy; 2026 TerraNova CMS Engine.</p>
-  </footer>
+  <!-- MODAL: ADD DESTINATION -->
+  <div class="modal-overlay" id="dest-modal">
+    <div class="modal-box">
+      <h3 style="margin-bottom:1.25rem;">Add New Destination</h3>
+      <form id="dest-form">
+        <div class="form-group">
+          <label class="form-label">Destination Name</label>
+          <input type="text" id="dest-name" class="form-control" required placeholder="e.g. Mirissa Beach">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Region / Badge</label>
+          <input type="text" id="dest-region" class="form-control" required placeholder="e.g. Southern Province">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rating</label>
+          <input type="text" id="dest-rating" class="form-control" value="4.9">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image URL</label>
+          <input type="url" id="dest-image" class="form-control" required placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Short Description</label>
+          <textarea id="dest-description" rows="3" class="form-control" required></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn-outline" onclick="closeDestModal()">Cancel</button>
+          <button type="submit" class="btn-secondary">Save Destination</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-  <script type="module" src="js/admin.js"></script>
+  <!-- Admin Controller Logic -->
+  <script type="module">
+    import { 
+      auth, 
+      db, 
+      collection, 
+      getDocs, 
+      doc, 
+      getDoc, 
+      addDoc, 
+      updateDoc, 
+      deleteDoc, 
+      serverTimestamp,
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from './js/firebase-config.js';
+
+    // UI Elements
+    const loginShield = document.getElementById('login-shield');
+    const adminWorkspace = document.getElementById('admin-workspace');
+    const userDisplay = document.getElementById('user-display');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginForm = document.getElementById('admin-login-form');
+    const loginError = document.getElementById('login-error');
+
+    // Tab Navigation
+    document.querySelectorAll('.admin-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        item.classList.add('active');
+        document.getElementById(item.getAttribute('data-tab')).classList.add('active');
+      });
+    });
+
+    // 1. AUTH WATCHER
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginShield.style.display = 'none';
+        adminWorkspace.style.display = 'grid';
+        userDisplay.innerText = user.email;
+        logoutBtn.style.display = 'inline-block';
+        loadDashboardData();
+      } else {
+        loginShield.style.display = 'block';
+        adminWorkspace.style.display = 'none';
+        userDisplay.innerText = "Not Logged In";
+        logoutBtn.style.display = 'none';
+      }
+    });
+
+    // 2. SIGN IN
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-password').value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (err) {
+        loginError.style.display = 'block';
+        loginError.innerText = "Authentication failed: " + err.message;
+      }
+    });
+
+    // 3. SIGN OUT
+    logoutBtn.addEventListener('click', () => signOut(auth));
+
+    // 4. LOAD DASHBOARD DATA
+    async function loadDashboardData() {
+      loadArticlesTable();
+      loadDestinationsTable();
+      loadInquiriesTable();
+      loadSettings();
+    }
+
+    // --- ARTICLES CRUD ---
+    async function loadArticlesTable() {
+      const tbody = document.getElementById('posts-table-body');
+      try {
+        const snap = await getDocs(collection(db, "posts"));
+        document.getElementById('stat-posts').innerText = snap.size;
+        
+        if (snap.empty) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No articles published yet. Click "+ New Article" to start.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        snap.forEach(docSnap => {
+          const p = docSnap.data();
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${p.title}</strong></td>
+            <td><span class="badge">${p.category || 'Travel'}</span></td>
+            <td>${p.readTime || '5 min'}</td>
+            <td>
+              <button class="btn-danger delete-post-btn" data-id="${docSnap.id}">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.querySelectorAll('.delete-post-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            if (confirm("Permanently delete this article?")) {
+              await deleteDoc(doc(db, "posts", id));
+              loadArticlesTable();
+            }
+          });
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Modal helpers
+    window.openPostModal = () => document.getElementById('post-modal').classList.add('active');
+    window.closePostModal = () => {
+      document.getElementById('post-form').reset();
+      document.getElementById('post-modal').classList.remove('active');
+    };
+
+    document.getElementById('post-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newPost = {
+        title: document.getElementById('post-title').value,
+        category: document.getElementById('post-category').value,
+        image: document.getElementById('post-image').value,
+        readTime: document.getElementById('post-readtime').value,
+        excerpt: document.getElementById('post-excerpt').value,
+        content: document.getElementById('post-content').value,
+        createdAt: serverTimestamp()
+      };
+
+      try {
+        await addDoc(collection(db, "posts"), newPost);
+        closePostModal();
+        loadArticlesTable();
+      } catch (err) {
+        alert("Error saving: " + err.message);
+      }
+    });
+
+    // --- DESTINATIONS CRUD ---
+    async function loadDestinationsTable() {
+      const tbody = document.getElementById('destinations-table-body');
+      try {
+        const snap = await getDocs(collection(db, "destinations"));
+        document.getElementById('stat-destinations').innerText = snap.size;
+
+        if (snap.empty) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No destinations yet. Click "+ Add Destination".</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${d.name}</strong></td>
+            <td>${d.region}</td>
+            <td>⭐ ${d.rating || '5.0'}</td>
+            <td>
+              <button class="btn-danger delete-dest-btn" data-id="${docSnap.id}">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.querySelectorAll('.delete-dest-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            if (confirm("Delete this destination?")) {
+              await deleteDoc(doc(db, "destinations", id));
+              loadDestinationsTable();
+            }
+          });
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    window.openDestModal = () => document.getElementById('dest-modal').classList.add('active');
+    window.closeDestModal = () => {
+      document.getElementById('dest-form').reset();
+      document.getElementById('dest-modal').classList.remove('active');
+    };
+
+    document.getElementById('dest-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await addDoc(collection(db, "destinations"), {
+          name: document.getElementById('dest-name').value,
+          region: document.getElementById('dest-region').value,
+          rating: document.getElementById('dest-rating').value,
+          image: document.getElementById('dest-image').value,
+          description: document.getElementById('dest-description').value,
+          createdAt: serverTimestamp()
+        });
+        closeDestModal();
+        loadDestinationsTable();
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    });
+
+    // --- INQUIRIES INBOX ---
+    async function loadInquiriesTable() {
+      const tbody = document.getElementById('inquiries-table-body');
+      try {
+        const snap = await getDocs(collection(db, "inquiries"));
+        document.getElementById('stat-inquiries').innerText = snap.size;
+
+        if (snap.empty) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Inbox is empty.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = '';
+        snap.forEach(docSnap => {
+          const msg = docSnap.data();
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${msg.name}</strong><br><small>${msg.email}</small></td>
+            <td>${msg.subject}</td>
+            <td><div style="max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${msg.message}</div></td>
+            <td>
+              <button class="btn-danger delete-inq-btn" data-id="${docSnap.id}">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.querySelectorAll('.delete-inq-btn').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            if (confirm("Delete this message?")) {
+              await deleteDoc(doc(db, "inquiries", id));
+              loadInquiriesTable();
+            }
+          });
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // --- SITE CONFIG / SETTINGS ---
+    async function loadSettings() {
+      try {
+        const snap = await getDoc(doc(db, "settings", "siteConfig"));
+        if (snap.exists()) {
+          const data = snap.data();
+          document.getElementById('set-hero-title').value = data.heroTitle || '';
+          document.getElementById('set-hero-subtitle').value = data.heroSubtitle || '';
+          document.getElementById('set-announcement').value = data.announcement || '';
+        }
+      } catch (err) {
+        console.warn("No custom site configuration found.");
+      }
+    }
+
+    document.getElementById('settings-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await updateDoc(doc(db, "settings", "siteConfig"), {
+          heroTitle: document.getElementById('set-hero-title').value,
+          heroSubtitle: document.getElementById('set-hero-subtitle').value,
+          announcement: document.getElementById('set-announcement').value
+        });
+        alert("Homepage settings updated successfully!");
+      } catch (err) {
+        // If doc doesn't exist yet, create it
+        try {
+          const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+          await setDoc(doc(db, "settings", "siteConfig"), {
+            heroTitle: document.getElementById('set-hero-title').value,
+            heroSubtitle: document.getElementById('set-hero-subtitle').value,
+            announcement: document.getElementById('set-announcement').value
+          });
+          alert("Homepage settings created and saved!");
+        } catch (innerErr) {
+          alert("Error: " + innerErr.message);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
