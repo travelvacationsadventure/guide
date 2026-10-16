@@ -3,49 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Travel Archives & Articles | TerraNova</title>
-  <meta name="description" content="Browse our global collection of itineraries, packing guides, and remote destinations.">
+  <title>Travel Guides - WanderLanka</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-  <header class="navbar">
-    <a href="index.html" class="brand-logo">TERRA<span>NOVA</span></a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="blog.html" class="active">Guides & Articles</a></li>
-      <li><a href="contact.html">Plan a Trip / Contact</a></li>
-      <li><a href="admin.html">Editor Portal</a></li>
-    </ul>
+  <header class="header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">🏝️ Wander<span>Lanka</span></a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="destinations.html" class="nav-link">Destinations</a></li>
+        <li><a href="blog.html" class="nav-link active">Travel Guides</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="admin.html" class="btn-primary">Admin Portal</a></li>
+      </ul>
+    </div>
   </header>
 
-  <main class="container">
-    <div style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">
-      <h1 style="font-size: 2.8rem; font-weight: 800;">The Global Compendium</h1>
-      <p style="color: var(--text-muted); margin-top: 0.6rem;">Explore articles covering every latitude and altitude.</p>
-      
-      <div style="margin-top: 2rem;">
-        <input type="text" id="live-search" class="form-control" placeholder="Search by destination, topic (e.g. Alps, Nomad, Safari), or keyword...">
-      </div>
-
-      <div class="filter-bar" id="filter-bar">
-        <button class="filter-btn active" data-category="ALL">All Pillars</button>
-        <button class="filter-btn" data-category="Alpine">Alpine & Trekking</button>
-        <button class="filter-btn" data-category="Coastal">Coastal & Islands</button>
-        <button class="filter-btn" data-category="Culture">Culture & Heritage</button>
-        <button class="filter-btn" data-category="Safari">Wildlife & Safari</button>
-      </div>
+  <section class="container" style="padding-top: 3rem;">
+    <div class="section-head">
+      <h2>Curated Travel Articles & Itineraries</h2>
+      <p>Filter by region or search for specific towns and hikes</p>
     </div>
 
-    <div class="grid" id="blog-grid">
-      <p style="color:var(--text-muted); grid-column: 1/-1;">Loading stories...</p>
+    <!-- Filter Buttons -->
+    <div class="filter-tabs" id="category-filters">
+      <button class="filter-btn active" data-category="ALL">All Guides</button>
+      <button class="filter-btn" data-category="Hill Country">Hill Country</button>
+      <button class="filter-btn" data-category="Culture">Culture & History</button>
+      <button class="filter-btn" data-category="Coast">Beaches & Coast</button>
+      <button class="filter-btn" data-category="Wildlife">Wildlife & Safaris</button>
     </div>
-  </main>
 
-  <footer>
-    <p>&copy; 2026 TerraNova Travel Media Group.</p>
+    <!-- Search Input -->
+    <div style="max-width: 480px; margin: 0 auto 3rem;">
+      <input type="text" id="guide-search" class="form-control" placeholder="Search guides by title or keyword...">
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid-3" id="all-posts-grid">
+      <p style="text-align: center; grid-column: 1/-1; color: var(--text-muted);">Fetching published articles...</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 WanderLanka Guide. All rights reserved.</p>
+    </div>
   </footer>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module">
+    import { db, collection, getDocs, query, orderBy } from './js/firebase-config.js';
+
+    let allPosts = [];
+
+    async function fetchPosts() {
+      const container = document.getElementById('all-posts-grid');
+      try {
+        const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        
+        allPosts = [];
+        snapshot.forEach(docSnap => {
+          allPosts.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        // Check URL search param
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('q');
+        if (searchQuery) {
+          document.getElementById('guide-search').value = searchQuery;
+          renderPosts(allPosts.filter(p => p.title.toLowerCase().includes(searchQuery.toLowerCase())));
+        } else {
+          renderPosts(allPosts);
+        }
+      } catch (err) {
+        console.error("Error reading posts:", err);
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--danger);">Unable to connect to database. Please check Firebase rules.</p>`;
+      }
+    }
+
+    function renderPosts(posts) {
+      const container = document.getElementById('all-posts-grid');
+      if (posts.length === 0) {
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No guides found matching your query.</p>`;
+        return;
+      }
+
+      container.innerHTML = posts.map(post => `
+        <article class="card">
+          <img class="card-img" src="${post.image || 'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=800&q=80'}" alt="${post.title}">
+          <div class="card-body">
+            <span class="badge">${post.category || 'Travel'}</span>
+            <h3 class="card-title">${post.title}</h3>
+            <p class="card-text">${post.excerpt || (post.content ? post.content.substring(0, 110) + '...' : '')}</p>
+            <div class="card-meta">
+              <span>⏱️ ${post.readTime || '5 min read'}</span>
+              <a href="article.html?id=${post.id}" class="btn-outline">Read Guide</a>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // Filter by button
+    document.getElementById('category-filters').addEventListener('click', (e) => {
+      if (!e.target.classList.contains('filter-btn')) return;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      e.target.classList.add('active');
+
+      const cat = e.target.getAttribute('data-category');
+      if (cat === 'ALL') {
+        renderPosts(allPosts);
+      } else {
+        renderPosts(allPosts.filter(p => p.category === cat));
+      }
+    });
+
+    // Real-time live search
+    document.getElementById('guide-search').addEventListener('input', (e) => {
+      const val = e.target.value.toLowerCase();
+      renderPosts(allPosts.filter(p => 
+        p.title.toLowerCase().includes(val) || 
+        (p.excerpt && p.excerpt.toLowerCase().includes(val))
+      ));
+    });
+
+    fetchPosts();
+  </script>
 </body>
 </html>
