@@ -3,38 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Travel Guides & Articles | WanderPulse</title>
-  <meta name="description" content="Explore our library of worldwide itineraries, travel advice, and regional profiles.">
+  <title>Travel Archives & Articles | TerraNova</title>
+  <meta name="description" content="Browse our global collection of itineraries, packing guides, and remote destinations.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
   <header class="navbar">
-    <a href="index.html" class="logo">WANDER<span>PULSE</span></a>
+    <a href="index.html" class="brand-logo">TERRA<span>NOVA</span></a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="blog.html" class="active">All Guides</a></li>
-      <li><a href="admin.html">Dashboard</a></li>
+      <li><a href="blog.html" class="active">Guides & Articles</a></li>
+      <li><a href="contact.html">Plan a Trip / Contact</a></li>
+      <li><a href="admin.html">Editor Portal</a></li>
     </ul>
   </header>
 
   <main class="container">
-    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
-      <h1>Global Guide Archives</h1>
-      <p style="color: var(--text-muted); margin-top: 0.5rem;">Explore our comprehensive collection of journeys.</p>
+    <div style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">
+      <h1 style="font-size: 2.8rem; font-weight: 800;">The Global Compendium</h1>
+      <p style="color: var(--text-muted); margin-top: 0.6rem;">Explore articles covering every latitude and altitude.</p>
       
-      <div style="max-width: 500px; margin: 2rem auto 0;">
-        <input type="text" id="search-input" class="form-control" placeholder="Search by title, location, or tag...">
+      <div style="margin-top: 2rem;">
+        <input type="text" id="live-search" class="form-control" placeholder="Search by destination, topic (e.g. Alps, Nomad, Safari), or keyword...">
+      </div>
+
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-btn active" data-category="ALL">All Pillars</button>
+        <button class="filter-btn" data-category="Alpine">Alpine & Trekking</button>
+        <button class="filter-btn" data-category="Coastal">Coastal & Islands</button>
+        <button class="filter-btn" data-category="Culture">Culture & Heritage</button>
+        <button class="filter-btn" data-category="Safari">Wildlife & Safari</button>
       </div>
     </div>
 
     <div class="grid" id="blog-grid">
-      <p style="color: var(--text-muted);">Loading articles...</p>
+      <p style="color:var(--text-muted); grid-column: 1/-1;">Loading stories...</p>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2026 WanderPulse Global Travel Media.</p>
+    <p>&copy; 2026 TerraNova Travel Media Group.</p>
   </footer>
 
   <script type="module" src="js/main.js"></script>
