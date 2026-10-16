@@ -14,113 +14,199 @@ import {
   onAuthStateChanged 
 } from './firebase-config.js';
 
-const authPanel = document.getElementById('auth-panel');
+// DOM Hooks
+const loginPanel = document.getElementById('login-panel');
 const dashboardPanel = document.getElementById('dashboard-panel');
-const loginForm = document.getElementById('login-form');
-const postForm = document.getElementById('post-form');
-const postsList = document.getElementById('posts-list');
-const btnLogout = document.getElementById('btn-logout');
-const userDisplay = document.getElementById('user-display');
-const submitBtn = document.getElementById('submit-btn');
+const adminLoginForm = document.getElementById('admin-login-form');
+const adminLogoutBtn = document.getElementById('admin-logout-btn');
+const userPill = document.getElementById('user-pill');
 
-// Observe Session
+// Tab Buttons & Panels
+const tabBtnWrite = document.getElementById('tab-btn-write');
+const tabBtnArticles = document.getElementById('tab-btn-articles');
+const tabBtnEnquiries = document.getElementById('tab-btn-enquiries');
+const tabWriteSection = document.getElementById('tab-write-section');
+const tabArticlesSection = document.getElementById('tab-articles-section');
+const tabEnquiriesSection = document.getElementById('tab-enquiries-section');
+
+// Forms & Containers
+const newArticleForm = document.getElementById('new-article-form');
+const btnPublishArt = document.getElementById('btn-publish-art');
+const articlesTableBody = document.getElementById('articles-table-body');
+const enquiriesTableBody = document.getElementById('enquiries-table-body');
+const countArticles = document.getElementById('count-articles');
+const countEnquiries = document.getElementById('count-enquiries');
+
+// Auth State Listener
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    authPanel.style.display = 'none';
+    loginPanel.style.display = 'none';
     dashboardPanel.style.display = 'block';
-    btnLogout.style.display = 'inline-flex';
-    userDisplay.textContent = user.email;
-    loadAdminArticles();
+    adminLogoutBtn.style.display = 'inline-block';
+    userPill.textContent = user.email;
+    loadDashboardData();
   } else {
-    authPanel.style.display = 'block';
+    loginPanel.style.display = 'block';
     dashboardPanel.style.display = 'none';
-    btnLogout.style.display = 'none';
-    userDisplay.textContent = '';
+    adminLogoutBtn.style.display = 'none';
+    userPill.textContent = '';
   }
 });
 
-// Authenticate Admin
-loginForm.addEventListener('submit', async (e) => {
+// Admin Log In
+adminLoginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+  const pass = document.getElementById('login-pass').value;
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    loginForm.reset();
+    await signInWithEmailAndPassword(auth, email, pass);
+    adminLoginForm.reset();
   } catch (err) {
     alert("Authentication failed: " + err.message);
   }
 });
 
-// Logout
-btnLogout.addEventListener('click', () => signOut(auth));
+// Admin Log Out
+adminLogoutBtn.addEventListener('click', () => signOut(auth));
 
-// Handle Article Publishing
-postForm.addEventListener('submit', async (e) => {
+// Tab Navigation
+function setTab(activeTabBtn, activeSection) {
+  [tabBtnWrite, tabBtnArticles, tabBtnEnquiries].forEach(btn => btn.classList.remove('active'));
+  [tabWriteSection, tabArticlesSection, tabEnquiriesSection].forEach(sec => sec.style.display = 'none');
+
+  activeTabBtn.classList.add('active');
+  activeSection.style.display = 'block';
+}
+
+tabBtnWrite.addEventListener('click', () => setTab(tabBtnWrite, tabWriteSection));
+tabBtnArticles.addEventListener('click', () => {
+  setTab(tabBtnArticles, tabArticlesSection);
+  loadArticlesList();
+});
+tabBtnEnquiries.addEventListener('click', () => {
+  setTab(tabBtnEnquiries, tabEnquiriesSection);
+  loadEnquiriesList();
+});
+
+// TinyMCE Article Publishing
+newArticleForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Publishing...';
+  
+  // Extract TinyMCE WYSIWYG Content
+  const richHtmlContent = tinymce.get('article-tinymce').getContent();
+  if (!richHtmlContent.trim()) {
+    alert("Please write your story content in the TinyMCE editor.");
+    return;
+  }
 
-  const newPost = {
-    title: document.getElementById('post-title').value.trim(),
-    category: document.getElementById('post-category').value.trim(),
-    author: document.getElementById('post-author').value.trim(),
-    imageUrl: document.getElementById('post-img').value.trim(),
-    excerpt: document.getElementById('post-excerpt').value.trim(),
-    content: document.getElementById('post-content').value.trim(),
+  btnPublishArt.disabled = true;
+  btnPublishArt.textContent = 'Uploading to Firestore...';
+
+  const newArticle = {
+    title: document.getElementById('art-input-title').value.trim(),
+    category: document.getElementById('art-input-category').value.trim(),
+    author: document.getElementById('art-input-author').value.trim(),
+    imageUrl: document.getElementById('art-input-image').value.trim(),
+    excerpt: document.getElementById('art-input-excerpt').value.trim(),
+    contentHtml: richHtmlContent,
     createdAt: serverTimestamp()
   };
 
   try {
-    await addDoc(collection(db, "articles"), newPost);
-    postForm.reset();
-    loadAdminArticles();
-    alert("Travel article successfully published!");
+    await addDoc(collection(db, "articles"), newArticle);
+    newArticleForm.reset();
+    tinymce.get('article-tinymce').setContent('');
+    alert("Travel article successfully published live!");
+    loadDashboardData();
   } catch (err) {
-    console.error("Publishing error:", err);
-    alert("Error publishing: " + err.message);
+    console.error(err);
+    alert("Publishing error: " + err.message);
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Publish Globally';
+    btnPublishArt.disabled = false;
+    btnPublishArt.textContent = 'Publish to Worldwide Feed';
   }
 });
 
-// Render dynamic article list with delete controls
-async function loadAdminArticles() {
-  postsList.innerHTML = `<p style="color: var(--text-muted);">Syncing catalog...</p>`;
+// Master Loader
+async function loadDashboardData() {
+  loadArticlesList();
+  loadEnquiriesList();
+}
+
+// Fetch and Render Articles Table
+async function loadArticlesList() {
   try {
     const q = query(collection(db, "articles"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
+    const snap = await getDocs(q);
+    countArticles.textContent = snap.size;
 
-    if (snapshot.empty) {
-      postsList.innerHTML = `<p style="color: var(--text-muted);">No entries found. Write your first post!</p>`;
+    if (snap.empty) {
+      articlesTableBody.innerHTML = '<tr><td colspan="4" style="color:var(--text-muted);">No stories published yet.</td></tr>';
       return;
     }
 
-    postsList.innerHTML = '';
-    snapshot.forEach((snapDoc) => {
-      const data = snapDoc.data();
-      const item = document.createElement('div');
-      item.className = 'admin-list-item';
-      item.innerHTML = `
-        <div>
-          <strong style="display:block; margin-bottom: 0.2rem;">${data.title}</strong>
-          <small style="color: var(--text-muted);">${data.category || 'Article'} • ${data.author || 'Staff'}</small>
-        </div>
-        <button class="btn btn-danger" style="padding: 0.35rem 0.8rem; font-size: 0.8rem;" data-id="${snapDoc.id}">Delete</button>
+    articlesTableBody.innerHTML = '';
+    snap.forEach(d => {
+      const item = d.data();
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${item.title}</strong></td>
+        <td><span class="card-tag" style="position:static;">${item.category}</span></td>
+        <td>${item.author}</td>
+        <td><button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" data-id="${d.id}">Delete</button></td>
       `;
 
-      item.querySelector('button').addEventListener('click', async () => {
-        if (confirm(`Permanently remove "${data.title}"?`)) {
-          await deleteDoc(doc(db, "articles", snapDoc.id));
-          loadAdminArticles();
+      tr.querySelector('button').addEventListener('click', async () => {
+        if (confirm(`Delete "${item.title}" permanently?`)) {
+          await deleteDoc(doc(db, "articles", d.id));
+          loadDashboardData();
         }
       });
 
-      postsList.appendChild(item);
+      articlesTableBody.appendChild(tr);
     });
   } catch (err) {
-    postsList.innerHTML = `<p style="color: #ef4444;">Could not load entries: ${err.message}</p>`;
+    console.error(err);
+  }
+}
+
+// Fetch and Render Enquiries Table
+async function loadEnquiriesList() {
+  try {
+    const q = query(collection(db, "enquiries"), orderBy("createdAt", "desc"));
+    const snap = await getDocs(q);
+    countEnquiries.textContent = snap.size;
+
+    if (snap.empty) {
+      enquiriesTableBody.innerHTML = '<tr><td colspan="6" style="color:var(--text-muted);">No inquiries received yet.</td></tr>';
+      return;
+    }
+
+    enquiriesTableBody.innerHTML = '';
+    snap.forEach(d => {
+      const item = d.data();
+      const date = item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleDateString() : 'N/A';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${date}</td>
+        <td><strong>${item.name}</strong></td>
+        <td><a href="mailto:${item.email}" style="color:var(--accent-gold);">${item.email}</a></td>
+        <td>${item.destination}</td>
+        <td style="max-width: 250px; font-size: 0.85rem; color: var(--text-muted);">${item.message}</td>
+        <td><button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" data-id="${d.id}">Remove</button></td>
+      `;
+
+      tr.querySelector('button').addEventListener('click', async () => {
+        if (confirm(`Remove inquiry from ${item.name}?`)) {
+          await deleteDoc(doc(db, "enquiries", d.id));
+          loadEnquiriesList();
+        }
+      });
+
+      enquiriesTableBody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error(err);
   }
 }
