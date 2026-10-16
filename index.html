@@ -3,51 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WanderPulse | Curated Global Travel Stories & Guides</title>
-  <meta name="description" content="Discover global expeditions, cultural insights, and immersive itineraries across continents with WanderPulse.">
-  <meta name="robots" content="index, follow">
-  
-  <!-- Open Graph / Meta -->
-  <meta property="og:title" content="WanderPulse | Global Travel Articles & Guides">
-  <meta property="og:description" content="Independent global stories, local guides, and nomadic wisdom.">
-  <meta property="og:type" content="website">
-
+  <title>TerraNova | Global Expeditions & Luxury Travel Guides</title>
+  <meta name="description" content="Immersive travel stories, curated worldwide itineraries, and independent nomadic journals across all continents.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+  <!-- Navigation -->
   <header class="navbar">
-    <a href="index.html" class="logo">WANDER<span>PULSE</span></a>
+    <a href="index.html" class="brand-logo">
+      TERRA<span>NOVA</span> <span class="brand-badge">GLOBAL</span>
+    </a>
     <ul class="nav-links">
       <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="blog.html">All Guides</a></li>
-      <li><a href="admin.html">Dashboard</a></li>
+      <li><a href="blog.html">Guides & Articles</a></li>
+      <li><a href="contact.html">Plan a Trip / Contact</a></li>
+      <li><a href="admin.html">Editor Portal</a></li>
     </ul>
   </header>
 
-  <main>
-    <section class="hero reveal">
-      <div class="hero-content">
-        <p class="hero-tagline">Universal Expeditions</p>
-        <h1>Journeys That Redefine Perspective.</h1>
-        <p>Expertly curated travel guides, hidden getaways, and long-form cultural narratives from across every meridian.</p>
-        <a href="blog.html" class="btn btn-primary">Browse Articles</a>
+  <!-- Hero Section -->
+  <section class="hero-wrapper reveal">
+    <div class="hero-content">
+      <div class="hero-pill">Worldwide Destination Compendium</div>
+      <h1 class="hero-title">Untamed Lands.<br>Uncharted Journeys.</h1>
+      <p class="hero-desc">Discover curated itineraries, architectural marvels, and cultural deep dives crafted by explorers across the seven continents.</p>
+      <div style="display:flex; gap:1rem; justify-content:center;">
+        <a href="blog.html" class="btn btn-primary">Read All Dispatches</a>
+        <a href="contact.html" class="btn btn-outline">Send Travel Inquiry</a>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="container">
-      <div class="section-header">
-        <h2>Latest Dispatches</h2>
+  <!-- Featured Grid -->
+  <main class="container">
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Latest Global Articles</h2>
+        <p class="section-subtitle">Real-time dispatches retrieved straight from the cloud.</p>
       </div>
-      <div class="grid" id="articles-grid">
-        <!-- Rendered dynamically via Firestore -->
-        <p style="color: var(--text-muted);">Fetching latest stories...</p>
-      </div>
-    </section>
-  </main>
+      <a href="blog.html" class="btn btn-outline">Browse Catalog &rarr;</a>
+    </div>
+
+    <div class="grid" id="homepage-grid">
+      <p style="color:var(--text-muted); grid-column: 1/-1;">Syncing latest global articles...</p>
+    </div>
+  </section>
 
   <footer>
-    <p>&copy; 2026 WanderPulse Global Travel Media. All rights reserved.</p>
+    <p>&copy; 2026 TerraNova Travel Media Group. All rights reserved.</p>
   </footer>
 
   <script type="module" src="js/main.js"></script>
