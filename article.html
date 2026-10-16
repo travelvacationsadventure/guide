@@ -3,144 +3,87 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Article Reader | TerraNova</title>
-  <meta id="meta-desc" name="description" content="Discover global stories on TerraNova.">
+  <title>Article - WanderLanka</title>
   <link rel="stylesheet" href="css/style.css">
-  <script type="application/ld+json" id="seo-schema"></script>
-  <style>
-    .article-wrap {
-      max-width: 840px;
-      margin: 2rem auto;
-    }
-    .article-hero-img {
-      width: 100%;
-      height: 480px;
-      object-fit: cover;
-      border-radius: var(--radius-lg);
-      margin: 2.5rem 0;
-      border: 1px solid var(--border-glass);
-    }
-    .rich-content {
-      font-size: 1.15rem;
-      line-height: 1.95;
-      color: #cbd5e1;
-    }
-    .rich-content h2, .rich-content h3 {
-      color: var(--text-primary);
-      margin: 2rem 0 1rem;
-      font-weight: 800;
-    }
-    .rich-content p {
-      margin-bottom: 1.6rem;
-    }
-    .rich-content img {
-      max-width: 100%;
-      border-radius: 12px;
-      margin: 1.5rem 0;
-    }
-    .rich-content blockquote {
-      border-left: 3px solid var(--accent-gold);
-      padding-left: 1.5rem;
-      margin: 2rem 0;
-      font-style: italic;
-      color: var(--accent-gold);
-    }
-  </style>
 </head>
 <body>
-
-  <header class="navbar">
-    <a href="index.html" class="brand-logo">TERRA<span>NOVA</span></a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="blog.html">Guides & Articles</a></li>
-      <li><a href="contact.html">Plan a Trip / Contact</a></li>
-      <li><a href="admin.html">Editor Portal</a></li>
-    </ul>
+  <header class="header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">🏝️ Wander<span>Lanka</span></a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="destinations.html" class="nav-link">Destinations</a></li>
+        <li><a href="blog.html" class="nav-link active">Travel Guides</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="admin.html" class="btn-primary">Admin Portal</a></li>
+      </ul>
+    </div>
   </header>
 
   <main class="container">
-    <div id="article-loader" style="text-align: center; padding: 6rem 0;">
-      <p style="color: var(--text-muted);">Fetching article content...</p>
+    <div class="article-container" id="article-wrapper">
+      <p style="text-align: center; color: var(--text-muted);">Loading article...</p>
     </div>
-
-    <article id="article-view" class="article-wrap reveal" style="display: none;">
-      <span class="card-tag" id="art-tag">Expedition</span>
-      <h1 id="art-title" style="font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 900; margin: 1rem 0; line-height: 1.2;"></h1>
-      <p style="color: var(--text-muted); font-size: 0.95rem;">
-        By <strong id="art-author" style="color: var(--text-primary);"></strong> • 
-        Published on <span id="art-date"></span>
-      </p>
-
-      <img id="art-img" class="article-hero-img" src="" alt="Story Cover">
-
-      <div class="rich-content" id="art-content"></div>
-
-      <div style="margin-top: 4rem; padding: 2rem; border-radius: 14px; background: var(--bg-glass); border: 1px solid var(--border-glass); text-align: center;">
-        <h3 style="margin-bottom: 0.5rem;">Inspired by this dispatch?</h3>
-        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Submit an enquiry to get assistance tailored to this route.</p>
-        <a href="contact.html" class="btn btn-primary">Make an Enquiry</a>
-      </div>
-    </article>
   </main>
 
-  <footer>
-    <p>&copy; 2026 TerraNova Travel Media Group.</p>
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 WanderLanka Guide. All rights reserved.</p>
+    </div>
   </footer>
 
   <script type="module">
     import { db, doc, getDoc } from './js/firebase-config.js';
 
-    async function loadStory() {
-      const id = new URLSearchParams(window.location.search).get('id');
-      if (!id) {
-        window.location.href = 'blog.html';
+    async function loadArticle() {
+      const wrapper = document.getElementById('article-wrapper');
+      const urlParams = new URLSearchParams(window.location.search);
+      const articleId = urlParams.get('id');
+
+      if (!articleId) {
+        wrapper.innerHTML = `
+          <h2>No Article Selected</h2>
+          <p>Please browse our <a href="blog.html" style="color:var(--primary); text-decoration:underline;">travel guides list</a> to pick an article.</p>
+        `;
         return;
       }
 
       try {
-        const snap = await getDoc(doc(db, "articles", id));
-        if (!snap.exists()) {
-          document.getElementById('article-loader').innerHTML = '<p>Article not found.</p>';
-          return;
+        const docRef = doc(db, "posts", articleId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const post = docSnap.data();
+          document.title = `${post.title} - WanderLanka`;
+
+          wrapper.innerHTML = `
+            <img class="article-hero-img" src="${post.image || 'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1200&q=80'}" alt="${post.title}">
+            <div class="article-header">
+              <span class="badge">${post.category || 'Travel Guide'}</span>
+              <h1>${post.title}</h1>
+              <div style="display:flex; gap:1.5rem; color:var(--text-muted); font-size:0.875rem; margin-bottom:1.5rem;">
+                <span>✍️ ${post.author || 'Editorial Team'}</span>
+                <span>⏱️ ${post.readTime || '5 min read'}</span>
+              </div>
+            </div>
+            <div class="article-content">
+              ${post.content ? post.content.replace(/\n/g, '<br><br>') : '<p>No content provided.</p>'}
+            </div>
+            <div style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-200);">
+              <a href="blog.html" class="btn-outline">&larr; Back to all travel guides</a>
+            </div>
+          `;
+        } else {
+          wrapper.innerHTML = `<h2>Article not found</h2><p>This post might have been removed or unpublished.</p>`;
         }
-
-        const data = snap.data();
-        document.title = `${data.title} | TerraNova`;
-        document.getElementById('meta-desc').setAttribute('content', data.excerpt || data.title);
-        document.getElementById('art-title').textContent = data.title;
-        document.getElementById('art-tag').textContent = data.category || 'Global';
-        document.getElementById('art-author').textContent = data.author || 'Editorial';
-        document.getElementById('art-img').src = data.imageUrl || "https://images.unsplash.com/photo-1488646953014-85cb44e25828";
-
-        const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('en-US', {
-          month: 'long', day: 'numeric', year: 'numeric'
-        }) : 'Recent';
-        document.getElementById('art-date').textContent = dateStr;
-
-        // Render HTML saved by TinyMCE
-        document.getElementById('art-content').innerHTML = data.contentHtml || data.content;
-
-        // Structured SEO
-        const schema = {
-          "@context": "https://schema.org",
-          "@type": "BlogPosting",
-          "headline": data.title,
-          "description": data.excerpt,
-          "image": data.imageUrl,
-          "author": { "@type": "Person", "name": data.author }
-        };
-        document.getElementById('seo-schema').textContent = JSON.stringify(schema);
-
-        document.getElementById('article-loader').style.display = 'none';
-        document.getElementById('article-view').style.display = 'block';
       } catch (err) {
-        console.error(err);
-        document.getElementById('article-loader').innerHTML = '<p>Error loading story.</p>';
+        console.error("Error reading article:", err);
+        wrapper.innerHTML = `<p style="color:var(--danger);">Error loading article from cloud database.</p>`;
       }
     }
 
-    loadStory();
+    loadArticle();
   </script>
 </body>
 </html>
