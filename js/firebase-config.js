@@ -8,9 +8,11 @@ import {
   getDoc, 
   doc, 
   deleteDoc, 
+  updateDoc,
   serverTimestamp, 
   query, 
-  orderBy 
+  orderBy,
+  limit
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 import { 
   getAuth, 
@@ -29,15 +31,12 @@ const firebaseConfig = {
   measurementId: "G-B6HCGEQ8CW"
 };
 
-// Initialize
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
 export { 
-  app, 
-  analytics, 
   db, 
   auth, 
   collection, 
@@ -46,9 +45,11 @@ export {
   getDoc, 
   doc, 
   deleteDoc, 
+  updateDoc,
   serverTimestamp, 
   query, 
-  orderBy,
+  orderBy, 
+  limit,
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged 
