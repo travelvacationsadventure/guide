@@ -3,136 +3,144 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Article Reader | WanderPulse</title>
-  <meta id="dynamic-meta-desc" name="description" content="Read full travel guide on WanderPulse.">
+  <title>Article Reader | TerraNova</title>
+  <meta id="meta-desc" name="description" content="Discover global stories on TerraNova.">
   <link rel="stylesheet" href="css/style.css">
-  <script type="application/ld+json" id="structured-data"></script>
+  <script type="application/ld+json" id="seo-schema"></script>
   <style>
-    .article-header {
-      max-width: 850px;
-      margin: 3rem auto 2rem;
-      text-align: center;
+    .article-wrap {
+      max-width: 840px;
+      margin: 2rem auto;
     }
-    .article-cover {
+    .article-hero-img {
       width: 100%;
-      max-height: 500px;
+      height: 480px;
       object-fit: cover;
-      border-radius: 16px;
-      margin-bottom: 3rem;
+      border-radius: var(--radius-lg);
+      margin: 2.5rem 0;
+      border: 1px solid var(--border-glass);
     }
-    .article-body {
-      max-width: 750px;
-      margin: 0 auto;
-      font-size: 1.1rem;
-      line-height: 1.9;
-      color: #e2e8f0;
+    .rich-content {
+      font-size: 1.15rem;
+      line-height: 1.95;
+      color: #cbd5e1;
     }
-    .article-body p {
-      margin-bottom: 1.5rem;
+    .rich-content h2, .rich-content h3 {
+      color: var(--text-primary);
+      margin: 2rem 0 1rem;
+      font-weight: 800;
+    }
+    .rich-content p {
+      margin-bottom: 1.6rem;
+    }
+    .rich-content img {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+    }
+    .rich-content blockquote {
+      border-left: 3px solid var(--accent-gold);
+      padding-left: 1.5rem;
+      margin: 2rem 0;
+      font-style: italic;
+      color: var(--accent-gold);
     }
   </style>
 </head>
 <body>
 
   <header class="navbar">
-    <a href="index.html" class="logo">WANDER<span>PULSE</span></a>
+    <a href="index.html" class="brand-logo">TERRA<span>NOVA</span></a>
     <ul class="nav-links">
       <li><a href="index.html">Home</a></li>
-      <li><a href="blog.html">All Guides</a></li>
-      <li><a href="admin.html">Dashboard</a></li>
+      <li><a href="blog.html">Guides & Articles</a></li>
+      <li><a href="contact.html">Plan a Trip / Contact</a></li>
+      <li><a href="admin.html">Editor Portal</a></li>
     </ul>
   </header>
 
   <main class="container">
-    <div id="article-loader" style="text-align:center; padding: 5rem 0;">
-      <p style="color: var(--text-muted);">Retrieving travel story...</p>
+    <div id="article-loader" style="text-align: center; padding: 6rem 0;">
+      <p style="color: var(--text-muted);">Fetching article content...</p>
     </div>
 
-    <article id="article-content" style="display: none;" class="reveal">
-      <div class="article-header">
-        <span class="category-tag" id="article-category">Travel</span>
-        <h1 id="article-title" style="font-size: 2.8rem; line-height: 1.2; margin: 1rem 0;"></h1>
-        <p style="color: var(--text-muted); font-size: 0.95rem;">
-          Published by <strong id="article-author" style="color: var(--text-main);"></strong> • 
-          <span id="article-date"></span>
-        </p>
+    <article id="article-view" class="article-wrap reveal" style="display: none;">
+      <span class="card-tag" id="art-tag">Expedition</span>
+      <h1 id="art-title" style="font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 900; margin: 1rem 0; line-height: 1.2;"></h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        By <strong id="art-author" style="color: var(--text-primary);"></strong> • 
+        Published on <span id="art-date"></span>
+      </p>
+
+      <img id="art-img" class="article-hero-img" src="" alt="Story Cover">
+
+      <div class="rich-content" id="art-content"></div>
+
+      <div style="margin-top: 4rem; padding: 2rem; border-radius: 14px; background: var(--bg-glass); border: 1px solid var(--border-glass); text-align: center;">
+        <h3 style="margin-bottom: 0.5rem;">Inspired by this dispatch?</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Submit an enquiry to get assistance tailored to this route.</p>
+        <a href="contact.html" class="btn btn-primary">Make an Enquiry</a>
       </div>
-
-      <img id="article-image" class="article-cover" src="" alt="Travel Guide Cover">
-
-      <div class="article-body" id="article-body"></div>
     </article>
   </main>
 
   <footer>
-    <p>&copy; 2026 WanderPulse Global Travel Media.</p>
+    <p>&copy; 2026 TerraNova Travel Media Group.</p>
   </footer>
 
   <script type="module">
     import { db, doc, getDoc } from './js/firebase-config.js';
 
-    async function loadArticle() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const articleId = urlParams.get('id');
-
-      if (!articleId) {
+    async function loadStory() {
+      const id = new URLSearchParams(window.location.search).get('id');
+      if (!id) {
         window.location.href = 'blog.html';
         return;
       }
 
       try {
-        const docRef = doc(db, "articles", articleId);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const post = docSnap.data();
-          
-          // Populate Content
-          document.title = `${post.title} | WanderPulse`;
-          document.getElementById('dynamic-meta-desc').setAttribute("content", post.excerpt || post.title);
-          document.getElementById('article-title').textContent = post.title;
-          document.getElementById('article-category').textContent = post.category || "Expedition";
-          document.getElementById('article-author').textContent = post.author || "Editorial Staff";
-          document.getElementById('article-image').src = post.imageUrl || "https://images.unsplash.com/photo-1488646953014-85cb44e25828";
-          document.getElementById('article-image').alt = post.title;
-
-          // Format Date
-          const createdDate = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString("en-US", {
-            month: 'long', day: 'numeric', year: 'numeric'
-          }) : 'Recently Published';
-          document.getElementById('article-date').textContent = createdDate;
-
-          // Process markdown-like paragraphs
-          const formattedBody = post.content.split('\n\n').map(p => `<p>${p}</p>`).join('');
-          document.getElementById('article-body').innerHTML = formattedBody;
-
-          // Google SEO JSON-LD schema injection
-          const schema = {
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "headline": post.title,
-            "description": post.excerpt,
-            "image": post.imageUrl,
-            "author": {
-              "@type": "Person",
-              "name": post.author || "WanderPulse Staff"
-            },
-            "datePublished": post.createdAt ? new Date(post.createdAt.seconds * 1000).toISOString() : new Date().toISOString()
-          };
-          document.getElementById('structured-data').textContent = JSON.stringify(schema);
-
-          document.getElementById('article-loader').style.display = 'none';
-          document.getElementById('article-content').style.display = 'block';
-        } else {
-          document.getElementById('article-loader').innerHTML = '<p>Story not found. It may have been removed.</p>';
+        const snap = await getDoc(doc(db, "articles", id));
+        if (!snap.exists()) {
+          document.getElementById('article-loader').innerHTML = '<p>Article not found.</p>';
+          return;
         }
+
+        const data = snap.data();
+        document.title = `${data.title} | TerraNova`;
+        document.getElementById('meta-desc').setAttribute('content', data.excerpt || data.title);
+        document.getElementById('art-title').textContent = data.title;
+        document.getElementById('art-tag').textContent = data.category || 'Global';
+        document.getElementById('art-author').textContent = data.author || 'Editorial';
+        document.getElementById('art-img').src = data.imageUrl || "https://images.unsplash.com/photo-1488646953014-85cb44e25828";
+
+        const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('en-US', {
+          month: 'long', day: 'numeric', year: 'numeric'
+        }) : 'Recent';
+        document.getElementById('art-date').textContent = dateStr;
+
+        // Render HTML saved by TinyMCE
+        document.getElementById('art-content').innerHTML = data.contentHtml || data.content;
+
+        // Structured SEO
+        const schema = {
+          "@context": "https://schema.org",
+          "@type": "BlogPosting",
+          "headline": data.title,
+          "description": data.excerpt,
+          "image": data.imageUrl,
+          "author": { "@type": "Person", "name": data.author }
+        };
+        document.getElementById('seo-schema').textContent = JSON.stringify(schema);
+
+        document.getElementById('article-loader').style.display = 'none';
+        document.getElementById('article-view').style.display = 'block';
       } catch (err) {
-        console.error("Read Error:", err);
-        document.getElementById('article-loader').innerHTML = '<p>Error loading article. Check connection.</p>';
+        console.error(err);
+        document.getElementById('article-loader').innerHTML = '<p>Error loading story.</p>';
       }
     }
 
-    loadArticle();
+    loadStory();
   </script>
 </body>
 </html>
