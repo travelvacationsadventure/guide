@@ -1,82 +1,134 @@
-import { db, collection, getDocs, query, orderBy } from './firebase-config.js';
+import { db, collection, getDocs, addDoc, query, orderBy, serverTimestamp } from './firebase-config.js';
 
-const articlesGrid = document.getElementById('articles-grid');
+const homepageGrid = document.getElementById('homepage-grid');
 const blogGrid = document.getElementById('blog-grid');
-const searchInput = document.getElementById('search-input');
+const liveSearch = document.getElementById('live-search');
+const filterBar = document.getElementById('filter-bar');
+const enquiryForm = document.getElementById('enquiry-form');
 
-let globalArticles = [];
+let cachedArticles = [];
+let activeCategory = 'ALL';
 
-// Reusable card template generator
-function createArticleCard(id, post) {
-  const defaultImage = "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80";
-  const dateFormatted = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString("en-US", {
-    month: "short", day: "numeric", year: "numeric"
-  }) : "Recent";
+function generateCard(id, doc) {
+  const defaultImg = "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80";
+  const dateStr = doc.createdAt ? new Date(doc.createdAt.seconds * 1000).toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric'
+  }) : 'Recently Published';
 
   return `
-    <article class="article-card">
-      <img src="${post.imageUrl || defaultImage}" alt="${post.title}" class="card-img" loading="lazy">
+    <article class="article-card reveal">
+      <div class="card-media">
+        <span class="card-tag">${doc.category || 'Global'}</span>
+        <img src="${doc.imageUrl || defaultImg}" alt="${doc.title}" loading="lazy">
+      </div>
       <div class="card-body">
-        <span class="category-tag">${post.category || 'Expedition'}</span>
-        <h3 class="card-title">${post.title}</h3>
-        <p class="card-excerpt">${post.excerpt || (post.content ? post.content.substring(0, 110) + '...' : '')}</p>
+        <h3 class="card-title">${doc.title}</h3>
+        <p class="card-excerpt">${doc.excerpt || ''}</p>
         <div class="card-meta">
-          <span>By ${post.author || 'Staff'}</span>
-          <span>${dateFormatted}</span>
+          <span>By ${doc.author || 'Editorial'}</span>
+          <span>${dateStr}</span>
         </div>
-        <a href="article.html?id=${id}" class="btn btn-primary" style="margin-top: 1.25rem; width: 100%;">Read Full Story</a>
+        <a href="article.html?id=${id}" class="btn btn-outline" style="margin-top: 1.25rem; width:100%;">Read Story &rarr;</a>
       </div>
     </article>
   `;
 }
 
-// Fetch all documents from Firestore
 async function fetchArticles() {
   try {
     const q = query(collection(db, "articles"), orderBy("createdAt", "desc"));
-    const snapshot = await getDocs(q);
+    const snap = await getDocs(q);
     
-    globalArticles = [];
-    snapshot.forEach(doc => {
-      globalArticles.push({ id: doc.id, ...doc.data() });
-    });
+    cachedArticles = [];
+    snap.forEach((d) => cachedArticles.push({ id: d.id, ...d.data() }));
 
-    renderFeed();
+    if (homepageGrid) {
+      renderFeed(homepageGrid, cachedArticles.slice(0, 6));
+    }
+    if (blogGrid) {
+      filterAndRender();
+    }
   } catch (err) {
-    console.error("Firestore retrieval error:", err);
-    const errorMsg = `<p style="color: var(--text-muted);">Failed to load latest stories. Please verify your Firestore security rules.</p>`;
-    if (articlesGrid) articlesGrid.innerHTML = errorMsg;
-    if (blogGrid) blogGrid.innerHTML = errorMsg;
+    console.error("Firestore read error:", err);
+    const msg = `<p style="color:var(--text-muted); grid-column:1/-1;">Check Firestore rules in Firebase Console. Database currently restricted or unpopulated.</p>`;
+    if (homepageGrid) homepageGrid.innerHTML = msg;
+    if (blogGrid) blogGrid.innerHTML = msg;
   }
 }
 
-function renderFeed(filterText = "") {
-  const filtered = globalArticles.filter(art => {
-    const query = filterText.toLowerCase();
-    return (
-      art.title?.toLowerCase().includes(query) ||
-      art.category?.toLowerCase().includes(query) ||
-      art.excerpt?.toLowerCase().includes(query)
-    );
-  });
-
-  const targetContainer = blogGrid || articlesGrid;
-  if (!targetContainer) return;
-
-  if (filtered.length === 0) {
-    targetContainer.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1;">No travel guides match your query.</p>`;
+function renderFeed(target, items) {
+  if (!target) return;
+  if (items.length === 0) {
+    target.innerHTML = `<p style="color:var(--text-muted); grid-column:1/-1;">No travel guides match the selection.</p>`;
     return;
   }
-
-  targetContainer.innerHTML = filtered.map(item => createArticleCard(item.id, item)).join('');
+  target.innerHTML = items.map(a => generateCard(a.id, a)).join('');
 }
 
-// Search interaction listener
-if (searchInput) {
-  searchInput.addEventListener('input', (e) => {
-    renderFeed(e.target.value);
+function filterAndRender() {
+  const searchTerm = liveSearch ? liveSearch.value.toLowerCase().trim() : '';
+  
+  const filtered = cachedArticles.filter(art => {
+    const matchesSearch = 
+      art.title?.toLowerCase().includes(searchTerm) ||
+      art.category?.toLowerCase().includes(searchTerm) ||
+      art.excerpt?.toLowerCase().includes(searchTerm);
+
+    const matchesCat = (activeCategory === 'ALL') || 
+      (art.category?.toLowerCase() === activeCategory.toLowerCase());
+
+    return matchesSearch && matchesCat;
+  });
+
+  renderFeed(blogGrid, filtered);
+}
+
+// Live Search Listener
+if (liveSearch) {
+  liveSearch.addEventListener('input', filterAndRender);
+}
+
+// Category Tabs Listener
+if (filterBar) {
+  filterBar.addEventListener('click', (e) => {
+    if (e.target.classList.contains('filter-btn')) {
+      filterBar.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      e.target.classList.add('active');
+      activeCategory = e.target.dataset.category;
+      filterAndRender();
+    }
   });
 }
 
-// Initialize on DOM load
+// Handle Direct Client Enquiry
+if (enquiryForm) {
+  enquiryForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('enq-submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting Request...';
+
+    const payload = {
+      name: document.getElementById('enq-name').value.trim(),
+      email: document.getElementById('enq-email').value.trim(),
+      destination: document.getElementById('enq-dest').value.trim(),
+      message: document.getElementById('enq-message').value.trim(),
+      status: 'New',
+      createdAt: serverTimestamp()
+    };
+
+    try {
+      await addDoc(collection(db, "enquiries"), payload);
+      enquiryForm.reset();
+      alert("Your inquiry has been successfully sent to our expedition desk!");
+    } catch (err) {
+      console.error(err);
+      alert("Submission error: " + err.message);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Inquiry →';
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', fetchArticles);
