@@ -3,57 +3,234 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TerraNova | Global Expeditions & Luxury Travel Guides</title>
-  <meta name="description" content="Immersive travel stories, curated worldwide itineraries, and independent nomadic journals across all continents.">
+  <title>WanderLanka - Ultimate Sri Lanka Travel Guide</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- Navigation -->
-  <header class="navbar">
-    <a href="index.html" class="brand-logo">
-      TERRA<span>NOVA</span> <span class="brand-badge">GLOBAL</span>
-    </a>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="blog.html">Guides & Articles</a></li>
-      <li><a href="contact.html">Plan a Trip / Contact</a></li>
-      <li><a href="admin.html">Editor Portal</a></li>
-    </ul>
+  <!-- Dynamic Announcement Banner -->
+  <div id="announcement-bar">Welcome to WanderLanka! Discover authentic curated itineraries for 2026.</div>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        🏝️ Wander<span>Lanka</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link active">Home</a></li>
+        <li><a href="destinations.html" class="nav-link">Destinations</a></li>
+        <li><a href="blog.html" class="nav-link">Travel Guides</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="admin.html" class="btn-primary">Admin Portal</a></li>
+      </ul>
+    </div>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero-wrapper reveal">
-    <div class="hero-content">
-      <div class="hero-pill">Worldwide Destination Compendium</div>
-      <h1 class="hero-title">Untamed Lands.<br>Uncharted Journeys.</h1>
-      <p class="hero-desc">Discover curated itineraries, architectural marvels, and cultural deep dives crafted by explorers across the seven continents.</p>
-      <div style="display:flex; gap:1rem; justify-content:center;">
-        <a href="blog.html" class="btn btn-primary">Read All Dispatches</a>
-        <a href="contact.html" class="btn btn-outline">Send Travel Inquiry</a>
-      </div>
+  <section class="hero">
+    <div class="container">
+      <h1 id="hero-title">Experience Sri Lanka's Wild Heart</h1>
+      <p id="hero-subtitle">Hand-picked guides, hidden hill-country trails, and pristine coastline itineraries crafted by island explorers.</p>
+      <form class="search-box" action="blog.html" method="GET">
+        <input type="text" name="q" placeholder="Search guides (e.g. Ella, Sigiriya, Mirissa)..." required>
+        <button type="submit" class="btn-primary">Explore</button>
+      </form>
     </div>
   </section>
 
-  <!-- Featured Grid -->
-  <main class="container">
+  <!-- Featured Destinations Section -->
+  <section class="container">
     <div class="section-head">
-      <div>
-        <h2 class="section-title">Latest Global Articles</h2>
-        <p class="section-subtitle">Real-time dispatches retrieved straight from the cloud.</p>
-      </div>
-      <a href="blog.html" class="btn btn-outline">Browse Catalog &rarr;</a>
+      <h2>Iconic Island Highlights</h2>
+      <p>Must-see regions to include on your upcoming Sri Lankan journey</p>
     </div>
-
-    <div class="grid" id="homepage-grid">
-      <p style="color:var(--text-muted); grid-column: 1/-1;">Syncing latest global articles...</p>
+    <div class="grid-3" id="destinations-grid">
+      <!-- Fallback static cards until Firestore loads -->
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1588598198321-9735fd52455b?auto=format&fit=crop&w=800&q=80" alt="Sigiriya Fortress">
+        <div class="card-body">
+          <span class="badge">Cultural Triangle</span>
+          <h3 class="card-title">Sigiriya Rock Fortress</h3>
+          <p class="card-text">Climb the 5th-century UNESCO palace perched high on an imposing sheer granite pillar surrounded by ancient water gardens.</p>
+          <div class="card-meta">
+            <span>⭐ 4.9 (2,450 Reviews)</span>
+            <a href="destinations.html" class="btn-outline">View Details</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=800&q=80" alt="Nine Arches Bridge Ella">
+        <div class="card-body">
+          <span class="badge">Hill Country</span>
+          <h3 class="card-title">Ella & Nine Arches Bridge</h3>
+          <p class="card-text">Hike misty tea plantations, swim below cascades, and witness the iconic blue train traverse colonial stone viaducts.</p>
+          <div class="card-meta">
+            <span>⭐ 4.9 (1,890 Reviews)</span>
+            <a href="destinations.html" class="btn-outline">View Details</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80" alt="Mirissa South Coast">
+        <div class="card-body">
+          <span class="badge">Southern Coast</span>
+          <h3 class="card-title">Mirissa & Weligama Bay</h3>
+          <p class="card-text">Golden sands, gentle surf breaks, palm-lined headlands, and world-class blue whale watching expeditions.</p>
+          <div class="card-meta">
+            <span>⭐ 4.8 (1,320 Reviews)</span>
+            <a href="destinations.html" class="btn-outline">View Details</a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <footer>
-    <p>&copy; 2026 TerraNova Travel Media Group. All rights reserved.</p>
+  <!-- Latest Travel Guides -->
+  <section class="container">
+    <div class="section-head">
+      <h2>Recent Travel Guides</h2>
+      <p>In-depth breakdowns, routes, logistics, and honest travel tips</p>
+    </div>
+    <div class="grid-3" id="posts-grid">
+      <!-- Dynamic blog posts render here -->
+      <p style="text-align: center; grid-column: 1/-1; color: var(--text-muted);">Syncing latest guides from WanderLanka Cloud...</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <h4>WanderLanka</h4>
+        <p>Curating authentic travel itineraries, high-altitude trekking trails, and cultural stories across Sri Lanka.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="destinations.html">Destinations</a></li>
+          <li><a href="blog.html">Travel Articles</a></li>
+          <li><a href="about.html">About Team</a></li>
+          <li><a href="contact.html">Get in Touch</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Top Regions</h4>
+        <ul class="footer-links">
+          <li>Central Highlands (Ella, Nuwara Eliya)</li>
+          <li>Cultural Triangle (Kandy, Dambulla)</li>
+          <li>Southern Coast (Galle, Mirissa)</li>
+          <li>Wild Yala & Wilpattu Safaris</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 WanderLanka Guide. All rights reserved.</p>
+    </div>
   </footer>
 
-  <script type="module" src="js/main.js"></script>
+  <!-- Firebase Integration Script -->
+  <script type="module">
+    import { db, collection, getDocs, doc, getDoc, query, orderBy, limit } from './js/firebase-config.js';
+
+    // 1. Load Live Site Config
+    async function loadSiteSettings() {
+      try {
+        const configSnap = await getDoc(doc(db, "settings", "siteConfig"));
+        if (configSnap.exists()) {
+          const data = configSnap.data();
+          if (data.heroTitle) document.getElementById('hero-title').innerText = data.heroTitle;
+          if (data.heroSubtitle) document.getElementById('hero-subtitle').innerText = data.heroSubtitle;
+          if (data.announcement) document.getElementById('announcement-bar').innerText = data.announcement;
+        }
+      } catch (err) {
+        console.warn("Using default site copy:", err);
+      }
+    }
+
+    // 2. Load Dynamic Posts
+    async function loadLatestPosts() {
+      const postsContainer = document.getElementById('posts-grid');
+      try {
+        const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(3));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          postsContainer.innerHTML = "";
+          querySnapshot.forEach((docSnap) => {
+            const post = docSnap.data();
+            const postId = docSnap.id;
+            postsContainer.innerHTML += `
+              <article class="card">
+                <img class="card-img" src="${post.image || 'https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=800&q=80'}" alt="${post.title}">
+                <div class="card-body">
+                  <span class="badge">${post.category || 'General'}</span>
+                  <h3 class="card-title">${post.title}</h3>
+                  <p class="card-text">${post.excerpt || (post.content ? post.content.substring(0, 110) + '...' : '')}</p>
+                  <div class="card-meta">
+                    <span>⏱️ ${post.readTime || '5 min read'}</span>
+                    <a href="article.html?id=${postId}" class="btn-outline">Read Guide</a>
+                  </div>
+                </div>
+              </article>
+            `;
+          });
+        } else {
+          // Fallback example if collection is empty
+          postsContainer.innerHTML = `
+            <article class="card">
+              <img class="card-img" src="https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=800&q=80" alt="Kandy to Ella Train">
+              <div class="card-body">
+                <span class="badge">Scenic Rail</span>
+                <h3 class="card-title">Kandy to Ella: The Ultimate Scenic Train Breakdown</h3>
+                <p class="card-text">Booking reserved tickets, choosing the best side of the train, and catching golden-hour tea estate views.</p>
+                <div class="card-meta">
+                  <span>⏱️ 7 min read</span>
+                  <a href="blog.html" class="btn-outline">Read Guide</a>
+                </div>
+              </div>
+            </article>
+          `;
+        }
+      } catch (err) {
+        console.error("Failed to load posts from Firestore:", err);
+      }
+    }
+
+    // 3. Load Dynamic Destinations
+    async function loadDestinations() {
+      const destContainer = document.getElementById('destinations-grid');
+      try {
+        const querySnapshot = await getDocs(collection(db, "destinations"));
+        if (!querySnapshot.empty) {
+          destContainer.innerHTML = "";
+          querySnapshot.forEach((docSnap) => {
+            const dest = docSnap.data();
+            destContainer.innerHTML += `
+              <div class="card">
+                <img class="card-img" src="${dest.image || 'https://images.unsplash.com/photo-1588598198321-9735fd52455b?auto=format&fit=crop&w=800&q=80'}" alt="${dest.name}">
+                <div class="card-body">
+                  <span class="badge">${dest.region || 'Sri Lanka'}</span>
+                  <h3 class="card-title">${dest.name}</h3>
+                  <p class="card-text">${dest.description || ''}</p>
+                  <div class="card-meta">
+                    <span>⭐ ${dest.rating || '5.0'}</span>
+                    <a href="destinations.html" class="btn-outline">Explore</a>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        }
+      } catch (err) {
+        console.warn("Using static destination fallbacks.");
+      }
+    }
+
+    loadSiteSettings();
+    loadLatestPosts();
+    loadDestinations();
+  </script>
 </body>
 </html>
