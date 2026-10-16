@@ -1,1 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Travel Guides & Articles | WanderPulse</title>
+  <meta name="description" content="Explore our library of worldwide itineraries, travel advice, and regional profiles.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+  <header class="navbar">
+    <a href="index.html" class="logo">WANDER<span>PULSE</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html" class="active">All Guides</a></li>
+      <li><a href="admin.html">Dashboard</a></li>
+    </ul>
+  </header>
+
+  <main class="container">
+    <div class="section-header" style="text-align: center; margin-bottom: 3rem;">
+      <h1>Global Guide Archives</h1>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">Explore our comprehensive collection of journeys.</p>
+      
+      <div style="max-width: 500px; margin: 2rem auto 0;">
+        <input type="text" id="search-input" class="form-control" placeholder="Search by title, location, or tag...">
+      </div>
+    </div>
+
+    <div class="grid" id="blog-grid">
+      <p style="color: var(--text-muted);">Loading articles...</p>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 WanderPulse Global Travel Media.</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
