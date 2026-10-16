@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article Reader | WanderPulse</title>
+  <meta id="dynamic-meta-desc" name="description" content="Read full travel guide on WanderPulse.">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json" id="structured-data"></script>
+  <style>
+    .article-header {
+      max-width: 850px;
+      margin: 3rem auto 2rem;
+      text-align: center;
+    }
+    .article-cover {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin-bottom: 3rem;
+    }
+    .article-body {
+      max-width: 750px;
+      margin: 0 auto;
+      font-size: 1.1rem;
+      line-height: 1.9;
+      color: #e2e8f0;
+    }
+    .article-body p {
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
 
+  <header class="navbar">
+    <a href="index.html" class="logo">WANDER<span>PULSE</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">All Guides</a></li>
+      <li><a href="admin.html">Dashboard</a></li>
+    </ul>
+  </header>
+
+  <main class="container">
+    <div id="article-loader" style="text-align:center; padding: 5rem 0;">
+      <p style="color: var(--text-muted);">Retrieving travel story...</p>
+    </div>
+
+    <article id="article-content" style="display: none;" class="reveal">
+      <div class="article-header">
+        <span class="category-tag" id="article-category">Travel</span>
+        <h1 id="article-title" style="font-size: 2.8rem; line-height: 1.2; margin: 1rem 0;"></h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Published by <strong id="article-author" style="color: var(--text-main);"></strong> • 
+          <span id="article-date"></span>
+        </p>
+      </div>
+
+      <img id="article-image" class="article-cover" src="" alt="Travel Guide Cover">
+
+      <div class="article-body" id="article-body"></div>
+    </article>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 WanderPulse Global Travel Media.</p>
+  </footer>
+
+  <script type="module">
+    import { db, doc, getDoc } from './js/firebase-config.js';
+
+    async function loadArticle() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const articleId = urlParams.get('id');
+
+      if (!articleId) {
+        window.location.href = 'blog.html';
+        return;
+      }
+
+      try {
+        const docRef = doc(db, "articles", articleId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const post = docSnap.data();
+          
+          // Populate Content
+          document.title = `${post.title} | WanderPulse`;
+          document.getElementById('dynamic-meta-desc').setAttribute("content", post.excerpt || post.title);
+          document.getElementById('article-title').textContent = post.title;
+          document.getElementById('article-category').textContent = post.category || "Expedition";
+          document.getElementById('article-author').textContent = post.author || "Editorial Staff";
+          document.getElementById('article-image').src = post.imageUrl || "https://images.unsplash.com/photo-1488646953014-85cb44e25828";
+          document.getElementById('article-image').alt = post.title;
+
+          // Format Date
+          const createdDate = post.createdAt ? new Date(post.createdAt.seconds * 1000).toLocaleDateString("en-US", {
+            month: 'long', day: 'numeric', year: 'numeric'
+          }) : 'Recently Published';
+          document.getElementById('article-date').textContent = createdDate;
+
+          // Process markdown-like paragraphs
+          const formattedBody = post.content.split('\n\n').map(p => `<p>${p}</p>`).join('');
+          document.getElementById('article-body').innerHTML = formattedBody;
+
+          // Google SEO JSON-LD schema injection
+          const schema = {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": post.title,
+            "description": post.excerpt,
+            "image": post.imageUrl,
+            "author": {
+              "@type": "Person",
+              "name": post.author || "WanderPulse Staff"
+            },
+            "datePublished": post.createdAt ? new Date(post.createdAt.seconds * 1000).toISOString() : new Date().toISOString()
+          };
+          document.getElementById('structured-data').textContent = JSON.stringify(schema);
+
+          document.getElementById('article-loader').style.display = 'none';
+          document.getElementById('article-content').style.display = 'block';
+        } else {
+          document.getElementById('article-loader').innerHTML = '<p>Story not found. It may have been removed.</p>';
+        }
+      } catch (err) {
+        console.error("Read Error:", err);
+        document.getElementById('article-loader').innerHTML = '<p>Error loading article. Check connection.</p>';
+      }
+    }
+
+    loadArticle();
+  </script>
+</body>
+</html>
