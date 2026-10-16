@@ -1,1 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WanderPulse | Curated Global Travel Stories & Guides</title>
+  <meta name="description" content="Discover global expeditions, cultural insights, and immersive itineraries across continents with WanderPulse.">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph / Meta -->
+  <meta property="og:title" content="WanderPulse | Global Travel Articles & Guides">
+  <meta property="og:description" content="Independent global stories, local guides, and nomadic wisdom.">
+  <meta property="og:type" content="website">
 
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="index.html" class="logo">WANDER<span>PULSE</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="blog.html">All Guides</a></li>
+      <li><a href="admin.html">Dashboard</a></li>
+    </ul>
+  </header>
+
+  <main>
+    <section class="hero reveal">
+      <div class="hero-content">
+        <p class="hero-tagline">Universal Expeditions</p>
+        <h1>Journeys That Redefine Perspective.</h1>
+        <p>Expertly curated travel guides, hidden getaways, and long-form cultural narratives from across every meridian.</p>
+        <a href="blog.html" class="btn btn-primary">Browse Articles</a>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="section-header">
+        <h2>Latest Dispatches</h2>
+      </div>
+      <div class="grid" id="articles-grid">
+        <!-- Rendered dynamically via Firestore -->
+        <p style="color: var(--text-muted);">Fetching latest stories...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 WanderPulse Global Travel Media. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
