@@ -3,94 +3,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editorial Control | WanderPulse</title>
+  <title>Control Panel | TerraNova Global</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="css/style.css">
+  
+  <!-- TinyMCE Rich-Text Engine -->
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>
+    tinymce.init({
+      selector: '#article-tinymce',
+      plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+      toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+      skin: 'oxide-dark',
+      content_css: 'dark',
+      height: 400
+    });
+  </script>
 </head>
 <body>
 
   <header class="navbar">
-    <a href="index.html" class="logo">WANDER<span>PULSE</span> ADMIN</a>
+    <a href="index.html" class="brand-logo">TERRA<span>NOVA</span> CMS</a>
     <div>
-      <span id="user-display" style="font-size: 0.85rem; color: var(--text-muted); margin-right: 1rem;"></span>
-      <button id="btn-logout" class="btn btn-danger" style="display:none; padding: 0.4rem 0.9rem; font-size: 0.8rem;">Logout</button>
+      <span id="user-pill" style="font-size: 0.85rem; color: var(--text-muted); margin-right: 1.2rem;"></span>
+      <button id="admin-logout-btn" class="btn btn-danger" style="display:none; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Log Out</button>
     </div>
   </header>
 
   <main class="container">
     
-    <!-- Login State Container -->
-    <div id="auth-panel" style="max-width: 420px; margin: 4rem auto; background: var(--bg-card); padding: 2.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
-      <h2 style="margin-bottom: 0.5rem; font-size: 1.5rem;">Editor Login</h2>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem;">Sign in with your Firebase credentials.</p>
+    <!-- Sign In Panel -->
+    <div id="login-panel" style="max-width: 440px; margin: 4rem auto; background: var(--bg-glass); border: 1px solid var(--border-glass); border-radius: var(--radius-lg); padding: 2.5rem;">
+      <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">Editor Gateway</h2>
+      <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; margin-bottom: 2rem;">Sign in to access publishing tools.</p>
       
-      <form id="login-form">
+      <form id="admin-login-form">
         <div class="form-group">
-          <label for="login-email">Email Address</label>
-          <input type="email" id="login-email" class="form-control" required placeholder="admin@wanderpulse.com">
+          <label>Email Address</label>
+          <input type="email" id="login-email" class="form-control" required placeholder="admin@terranova.com">
         </div>
         <div class="form-group">
-          <label for="login-password">Password</label>
-          <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
+          <label>Password</label>
+          <input type="password" id="login-pass" class="form-control" required placeholder="••••••••">
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Access Portal</button>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Authenticate Session</button>
       </form>
     </div>
 
-    <!-- Authenticated Dashboard -->
+    <!-- Active Management Dashboard -->
     <div id="dashboard-panel" style="display: none;">
-      <div class="admin-grid">
-        
-        <!-- Post Editor -->
-        <div>
-          <h2 style="margin-bottom: 1.5rem;">Compose Article</h2>
-          <form id="post-form" style="background: var(--bg-card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-light);">
-            <div class="form-group">
-              <label for="post-title">Article Headline</label>
-              <input type="text" id="post-title" class="form-control" required placeholder="e.g. Crossing the Atacama by Rail">
-            </div>
-            
-            <div class="form-group">
-              <label for="post-category">Category / Pillar</label>
-              <input type="text" id="post-category" class="form-control" required placeholder="e.g. Cultural Escapes, Mountaineering">
-            </div>
-
-            <div class="form-group">
-              <label for="post-author">Author Name</label>
-              <input type="text" id="post-author" class="form-control" required placeholder="e.g. Elena Rostova">
-            </div>
-
-            <div class="form-group">
-              <label for="post-img">Featured Image Direct URL</label>
-              <input type="url" id="post-img" class="form-control" required placeholder="https://images.unsplash.com/...">
-            </div>
-
-            <div class="form-group">
-              <label for="post-excerpt">Short Meta Summary (SEO)</label>
-              <textarea id="post-excerpt" class="form-control" style="min-height: 70px;" required placeholder="A brief teaser for the reader and meta tags."></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="post-content">Story Body (Separate paragraphs with double newlines)</label>
-              <textarea id="post-content" class="form-control" style="min-height: 200px;" required placeholder="Write the comprehensive travel story here..."></textarea>
-            </div>
-
-            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%;">Publish Globally</button>
-          </form>
+      
+      <!-- Metrics Overview -->
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-number" id="count-articles">0</div>
+          <div class="stat-label">Published Articles</div>
         </div>
-
-        <!-- Current Database Index -->
-        <div>
-          <h2 style="margin-bottom: 1.5rem;">Live Article Index</h2>
-          <div id="posts-list" style="max-height: 800px; overflow-y: auto;">
-            <p style="color: var(--text-muted);">Syncing with Cloud Firestore...</p>
-          </div>
+        <div class="stat-box">
+          <div class="stat-number" id="count-enquiries">0</div>
+          <div class="stat-label">Pending Inquiries</div>
         </div>
-
+        <div class="stat-box">
+          <div class="stat-number">2026</div>
+          <div class="stat-label">Cloud Edition</div>
+        </div>
       </div>
-    </div>
 
+      <!-- Navigation Tabs -->
+      <div class="admin-tabs">
+        <button class="tab-btn active" id="tab-btn-write">Create Article (TinyMCE)</button>
+        <button class="tab-btn" id="tab-btn-articles">Manage Articles</button>
+        <button class="tab-btn" id="tab-btn-enquiries">Trip Inquiries & Messages</button>
+      </div>
+
+      <!-- TAB 1: Editor / Compose -->
+      <section id="tab-write-section" class="contact-card">
+        <h2 style="margin-bottom: 1.5rem;">Compose Travel Article</h2>
+        <form id="new-article-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+              <label>Article Title</label>
+              <input type="text" id="art-input-title" class="form-control" required placeholder="e.g. Crossing the Pamir Highway">
+            </div>
+            <div class="form-group">
+              <label>Category (Alpine, Coastal, Culture, Safari)</label>
+              <input type="text" id="art-input-category" class="form-control" required placeholder="Alpine">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group">
+              <label>Author</label>
+              <input type="text" id="art-input-author" class="form-control" required placeholder="Your Name or Editorial Desk">
+            </div>
+            <div class="form-group">
+              <label>High-Res Cover Image Link</label>
+              <input type="url" id="art-input-image" class="form-control" required placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>SEO Meta Excerpt</label>
+            <textarea id="art-input-excerpt" class="form-control" rows="2" required placeholder="1-2 sentence hook for cards and search engine snippets..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Complete Article Body</label>
+            <textarea id="article-tinymce"></textarea>
+          </div>
+
+          <button type="submit" id="btn-publish-art" class="btn btn-primary" style="padding: 1rem 2.5rem;">Publish to Worldwide Feed</button>
+        </form>
+      </section>
+
+      <!-- TAB 2: Manage Articles List -->
+      <section id="tab-articles-section" class="contact-card" style="display: none;">
+        <h2 style="margin-bottom: 1.5rem;">Existing Articles</h2>
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Author</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="articles-table-body">
+              <tr><td colspan="4" style="color:var(--text-muted);">Syncing database...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: Enquiries -->
+      <section id="tab-enquiries-section" class="contact-card" style="display: none;">
+        <h2 style="margin-bottom: 1.5rem;">Travel Inquiries Received</h2>
+        <div style="overflow-x: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Email</th>
+                <th>Destination</th>
+                <th>Message</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="enquiries-table-body">
+              <tr><td colspan="6" style="color:var(--text-muted);">Loading user submissions...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
   </main>
+
+  <footer>
+    <p>&copy; 2026 TerraNova CMS Engine.</p>
+  </footer>
 
   <script type="module" src="js/admin.js"></script>
 </body>
