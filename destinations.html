@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Destinations - WanderLanka</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">🏝️ Wander<span>Lanka</span></a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="destinations.html" class="nav-link active">Destinations</a></li>
+        <li><a href="blog.html" class="nav-link">Travel Guides</a></li>
+        <li><a href="about.html" class="nav-link">About</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+        <li><a href="admin.html" class="btn-primary">Admin Portal</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: 3rem;">
+    <div class="section-head">
+      <h2>Explore Sri Lanka by Region</h2>
+      <p>From misty mountain peaks to palm-fringed turquoise waters</p>
+    </div>
+
+    <div class="grid-3" id="all-destinations-grid">
+      <!-- Fallback cards -->
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1588598198321-9735fd52455b?auto=format&fit=crop&w=800&q=80" alt="Sigiriya">
+        <div class="card-body">
+          <span class="badge">Cultural Triangle</span>
+          <h3 class="card-title">Sigiriya Ancient Fortress</h3>
+          <p class="card-text">Climb the 1,200 steps through monumental lion paws to Emperor Kashyapa’s sky citadel.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=800&q=80" alt="Ella">
+        <div class="card-body">
+          <span class="badge">Central Highlands</span>
+          <h3 class="card-title">Ella Gap & Little Adam's Peak</h3>
+          <p class="card-text">Breath-taking hikes, panoramic cloud forests, and cascading waterfalls.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?auto=format&fit=crop&w=800&q=80" alt="Mirissa">
+        <div class="card-body">
+          <span class="badge">Southern Province</span>
+          <h3 class="card-title">Mirissa Beach</h3>
+          <p class="card-text">Coconut Tree Hill, calm tide pools, snorkeling with sea turtles, and vibrant sunset cafes.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-bottom">
+      <p>&copy; 2026 WanderLanka Guide. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { db, collection, getDocs } from './js/firebase-config.js';
+
+    async function loadDestinations() {
+      const container = document.getElementById('all-destinations-grid');
+      try {
+        const querySnapshot = await getDocs(collection(db, "destinations"));
+        if (!querySnapshot.empty) {
+          container.innerHTML = "";
+          querySnapshot.forEach(docSnap => {
+            const dest = docSnap.data();
+            container.innerHTML += `
+              <div class="card">
+                <img class="card-img" src="${dest.image || 'https://images.unsplash.com/photo-1588598198321-9735fd52455b?auto=format&fit=crop&w=800&q=80'}" alt="${dest.name}">
+                <div class="card-body">
+                  <span class="badge">${dest.region || 'Region'}</span>
+                  <h3 class="card-title">${dest.name}</h3>
+                  <p class="card-text">${dest.description || ''}</p>
+                  <div class="card-meta">
+                    <span>⭐ ${dest.rating || '4.9'}</span>
+                    <a href="blog.html?q=${encodeURIComponent(dest.name)}" class="btn-outline">View Related Guides</a>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        }
+      } catch (err) {
+        console.warn("Using fallback destination content:", err);
+      }
+    }
+
+    loadDestinations();
+  </script>
+</body>
+</html>
