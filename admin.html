@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editorial Control | WanderPulse</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+  <header class="navbar">
+    <a href="index.html" class="logo">WANDER<span>PULSE</span> ADMIN</a>
+    <div>
+      <span id="user-display" style="font-size: 0.85rem; color: var(--text-muted); margin-right: 1rem;"></span>
+      <button id="btn-logout" class="btn btn-danger" style="display:none; padding: 0.4rem 0.9rem; font-size: 0.8rem;">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- Login State Container -->
+    <div id="auth-panel" style="max-width: 420px; margin: 4rem auto; background: var(--bg-card); padding: 2.5rem; border-radius: 12px; border: 1px solid var(--border-light);">
+      <h2 style="margin-bottom: 0.5rem; font-size: 1.5rem;">Editor Login</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem;">Sign in with your Firebase credentials.</p>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-control" required placeholder="admin@wanderpulse.com">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Access Portal</button>
+      </form>
+    </div>
+
+    <!-- Authenticated Dashboard -->
+    <div id="dashboard-panel" style="display: none;">
+      <div class="admin-grid">
+        
+        <!-- Post Editor -->
+        <div>
+          <h2 style="margin-bottom: 1.5rem;">Compose Article</h2>
+          <form id="post-form" style="background: var(--bg-card); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-light);">
+            <div class="form-group">
+              <label for="post-title">Article Headline</label>
+              <input type="text" id="post-title" class="form-control" required placeholder="e.g. Crossing the Atacama by Rail">
+            </div>
+            
+            <div class="form-group">
+              <label for="post-category">Category / Pillar</label>
+              <input type="text" id="post-category" class="form-control" required placeholder="e.g. Cultural Escapes, Mountaineering">
+            </div>
+
+            <div class="form-group">
+              <label for="post-author">Author Name</label>
+              <input type="text" id="post-author" class="form-control" required placeholder="e.g. Elena Rostova">
+            </div>
+
+            <div class="form-group">
+              <label for="post-img">Featured Image Direct URL</label>
+              <input type="url" id="post-img" class="form-control" required placeholder="https://images.unsplash.com/...">
+            </div>
+
+            <div class="form-group">
+              <label for="post-excerpt">Short Meta Summary (SEO)</label>
+              <textarea id="post-excerpt" class="form-control" style="min-height: 70px;" required placeholder="A brief teaser for the reader and meta tags."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="post-content">Story Body (Separate paragraphs with double newlines)</label>
+              <textarea id="post-content" class="form-control" style="min-height: 200px;" required placeholder="Write the comprehensive travel story here..."></textarea>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%;">Publish Globally</button>
+          </form>
+        </div>
+
+        <!-- Current Database Index -->
+        <div>
+          <h2 style="margin-bottom: 1.5rem;">Live Article Index</h2>
+          <div id="posts-list" style="max-height: 800px; overflow-y: auto;">
+            <p style="color: var(--text-muted);">Syncing with Cloud Firestore...</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>
