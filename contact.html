@@ -1,1 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan a Trip & Contact | TerraNova</title>
+  <meta name="description" content="Reach our expedition planners and global travel editors.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+  <header class="navbar">
+    <a href="index.html" class="brand-logo">TERRA<span>NOVA</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="blog.html">Guides & Articles</a></li>
+      <li><a href="contact.html" class="active">Plan a Trip / Contact</a></li>
+      <li><a href="admin.html">Editor Portal</a></li>
+    </ul>
+  </header>
+
+  <main class="container">
+    <div class="contact-grid">
+      
+      <!-- Company Information -->
+      <div>
+        <div class="hero-pill">Expedition Inquiries</div>
+        <h1 style="font-size: 2.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem;">Let's Chart Your Next Itinerary.</h1>
+        <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Have questions about a route, need a custom travel plan, or want to contribute a travel article? Our desk responds within 24 hours.</p>
+
+        <div class="info-item">
+          <div class="info-icon">📍</div>
+          <div>
+            <h4 style="font-weight: 700;">Global Presence</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Desk operations across Dubai, Zurich, and Singapore.</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">✉️</div>
+          <div>
+            <h4 style="font-weight: 700;">Editorial & Queries</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">concierge@terranovaguides.com</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission Form -->
+      <div class="contact-card">
+        <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1.5rem;">Send Your Travel Enquiry</h3>
+        
+        <form id="enquiry-form">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="enq-name" class="form-control" required placeholder="e.g. Julian Thorne">
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="enq-email" class="form-control" required placeholder="julian@example.com">
+          </div>
+
+          <div class="form-group">
+            <label>Destination / Region of Interest</label>
+            <input type="text" id="enq-dest" class="form-control" required placeholder="e.g. Norwegian Fjords, Patagonia, Kyūshū">
+          </div>
+
+          <div class="form-group">
+            <label>Enquiry Details / Timeline / Travelers</label>
+            <textarea id="enq-message" class="form-control" rows="5" required placeholder="Tell us about your expected travel dates, style, or specific guide questions..."></textarea>
+          </div>
+
+          <button type="submit" id="enq-submit-btn" class="btn btn-primary" style="width: 100%;">Submit Inquiry &rarr;</button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 TerraNova Travel Media Group.</p>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
