@@ -1,25 +1,25 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 import { 
   getFirestore, 
   collection, 
-  addDoc, 
   getDocs, 
-  getDoc, 
   doc, 
+  getDoc, 
+  addDoc, 
+  updateDoc, 
   deleteDoc, 
-  updateDoc,
-  serverTimestamp, 
   query, 
-  orderBy,
-  limit
-} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+  orderBy, 
+  limit, 
+  serverTimestamp 
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { 
   getAuth, 
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA-SO3hCgkMqzxSXZc25NYxKe4JIfXPZSo",
@@ -31,25 +31,28 @@ const firebaseConfig = {
   measurementId: "G-B6HCGEQ8CW"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 const db = getFirestore(app);
 const auth = getAuth(app);
 
 export { 
+  app, 
+  analytics, 
   db, 
   auth, 
   collection, 
-  addDoc, 
   getDocs, 
-  getDoc, 
   doc, 
+  getDoc, 
+  addDoc, 
+  updateDoc, 
   deleteDoc, 
-  updateDoc,
-  serverTimestamp, 
   query, 
   orderBy, 
-  limit,
+  limit, 
+  serverTimestamp,
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged 
